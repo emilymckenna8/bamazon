@@ -21,7 +21,7 @@ connection.query("SELECT * FROM products", function(err, results){
     if (err) throw err;
     var itemList = "";
     for (i = 0; i<results.length; i++) {
-        var itemList = "ID: " + results[i].id + "Item Name: " + results[i].product_name+
+        var itemList = "ID: " + results[i].item_id + "Item Name: " + results[i].product_name+
         "Price: " + results[i].price + "\n";
     }
     return itemList
@@ -48,11 +48,35 @@ function start() {
         
         
         .then(function(answer) {
-         //check to see if there is enouch of the product in the inventory  
-           for (i=0; i<)
-           //if there is 
-            connection.query(
-
-            )
-        })
+            var chosenItem = "";
+         // get the info for the chosen item 
+           for (i=0; i< results.length; i++){
+               if (results[i].item_id === answer.id) {
+                   chosenItem = results[i];
+               }
+           }
+           //if there is enough, update the table the quanitity
+           if (chosenItem.stock_quantity >= parseInt(answer.quantity)) {
+               connection.query(
+                   "UPDATE products SET ? WHERE ?",
+                   [
+                       {
+                           stock_quantity: stock_quantity - parseInt(answer.quantity)
+                       },
+                       {
+                           item_id: chosenItem.item_id
+                       }
+                   ],
+                   function(error) {
+                       if (error) throw err;
+                       console.log("Purchase was successful");
+                       start();
+                   }
+               );
+           }
+           else {
+               console.log("The item amount you selected is more than we have in stock");
+           }
+           start();
+        });
 }
