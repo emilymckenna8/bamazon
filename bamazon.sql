@@ -13,7 +13,7 @@ CREATE TABLE products(
 );
 
 INSERT INTO products (product_name, department_name, price, stock_quantity)
-VALUES ("L'Oreal mascara","Cosmetics",9.99,88)
+VALUES ("L'Oreal mascara","Cosmetics",9.99,88),
 ("Morton Salt","Condiments",2.99,100),
 ("Red Bull","Beverages",3.99,200),
 ("Amazon Echo Dot","Electronics",50,300),
@@ -25,7 +25,7 @@ VALUES ("L'Oreal mascara","Cosmetics",9.99,88)
 ("Jergens lotion","Cosmetics",7.50,90),
 ("Orbit gum","Food",2,50),
 ("Halo Top ice cream","Food",5,50),
-("Snickers","Food",3,75),
+("Snickers","Food",3,75);
 
 
 
