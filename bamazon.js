@@ -30,11 +30,8 @@ connection.query("SELECT * FROM products", function(err, results){
         console.log(itemList) 
     }
    start(); 
-});
-
-    
+});    
 }
-
 //start prompts to customer
 function start() {
     inquirer
@@ -49,19 +46,11 @@ function start() {
                 type: "input",
                 message: "How many would you like to purchase"
             }
-        ])  
-        
-        
+        ])                  
         .then(function(answer) {
             var userID = answer.id;
          // get the info for the chosen item 
          connection.query("SELECT * FROM products WHERE ?",{item_id:userID}, function(err, results) {
-            //testing; take these out
-             console.log(userID);
-             console.log(answer.quantity);
-             console.log(results);
-             console.log(results[0].stock_quantity);
-            //compare user input to what is in stock
            if ( answer.quantity<= results[0].stock_quantity) {
                //update the database when purchase was successful
                connection.query(
