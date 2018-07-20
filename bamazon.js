@@ -12,6 +12,7 @@ var connection = mysql.createConnection({
 
 connection.connect(function(err) {
     if (err) throw err;
+    console.log("connection successful");
     displayInventory();
 });
 
@@ -20,14 +21,18 @@ function displayInventory(){
 connection.query("SELECT * FROM products", function(err, results){
     if (err) throw err;
     var itemList = "";
-    for (i = 0; i<results.length; i++) {
-        var itemList = "ID: " + results[i].item_id + "Item Name: " + results[i].product_name+
-        "Price: " + results[i].price + "\n";
+    console.log("Available Items: \n");
+    for (i = 0; i< results.length; i++) {
+        var itemList = " ";
+        itemList += "ID: " + results[i].item_id;
+        itemList += " Item Name: " + results[i].product_name;
+        itemList += " Price: " + results[i].price + "\n";
+        console.log(itemList) 
     }
-    return itemList
-})
+   start(); 
+});
 
-    start();
+    
 }
 
 //start prompts to customer
@@ -48,35 +53,41 @@ function start() {
         
         
         .then(function(answer) {
-            var chosenItem = "";
+            var userID = answer.id;
          // get the info for the chosen item 
-           for (i=0; i< results.length; i++){
-               if (results[i].item_id === answer.id) {
-                   chosenItem = results[i];
-               }
-           }
-           //if there is enough, update the table the quanitity
-           if (chosenItem.stock_quantity >= parseInt(answer.quantity)) {
+         connection.query("SELECT * FROM products WHERE ?",{item_id:userID}, function(err, results) {
+            //testing; take these out
+             console.log(userID);
+             console.log(answer.quantity);
+             console.log(results);
+             console.log(results[0].stock_quantity);
+            //compare user input to what is in stock
+           if ( answer.quantity<= results[0].stock_quantity) {
+               //update the database when purchase was successful
                connection.query(
                    "UPDATE products SET ? WHERE ?",
                    [
                        {
-                           stock_quantity: stock_quantity - parseInt(answer.quantity)
+                           stock_quantity: (results[0].stock_quantity - answer.quantity)
                        },
                        {
-                           item_id: chosenItem.item_id
+                           item_id: userID
                        }
                    ],
                    function(error) {
                        if (error) throw err;
-                       console.log("Purchase was successful");
+                       console.log("Purchase was successful!");
+                       console.log("Your total is $" + (results[0].price * answer.quantity));
                        start();
                    }
-               );
-           }
+                );
+            }           
            else {
                console.log("The item amount you selected is more than we have in stock");
+               start();
            }
-           start();
+           
         });
+    
+    });
 }
